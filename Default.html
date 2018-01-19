@@ -39,9 +39,9 @@
                 <tbody>
                     <tr ng-repeat="x in products">
                         <td>{{x.ProductName}}</td>
-                        <td>{{x.Introduction}}</td>
+                        <td>{{x.IntroductionDate}}</td>
                         <td>{{x.Url}}</td>
-                        <td><button type='button' onclick='productGet(this);'class='btn btn-default' data-id='{{x.ProductId}}'><span class='glyphicon glyphicon-edit' /></button>
+                        <td><button type='button' ng-click='productGet(x.ProductId)'><span class='glyphicon glyphicon-edit' /></button>
                         </td>
                     </tr>
                 </tbody>
@@ -52,8 +52,8 @@
         <div class="col-sm-6">
             <button type="button" id="addButton"
                     class="btn btn-primary"
-                    onclick="addClick();">
-                Add Product
+                    ng-click="addClick();">
+                AddProduct
             </button>
         </div>
     </div>
@@ -67,19 +67,19 @@
                     <div class="form-group">
                         <label for="productname">Product Name</label>
                         <input type="text" id="productname"
-                               class="form-control" />
+                               class="form-control" ng-model="product.ProductName" />
                     </div>
                     <div class="form-group">
                         <label for="introdate">
-                            Introduction Date
+                            IntroductionDate
                         </label>
                         <input type="date" id="introdate"
-                               class="form-control" />
+                               class="form-control" ng-model="product.IntroductionDate" />
                     </div>
                     <div class="form-group">
                         <label for="url">URL</label>
                         <input type="url" id="url"
-                               class="form-control" />
+                               class="form-control" ng-model="product.Url"/>
                     </div>
                 </div>
                 <div class="panel-footer">
@@ -104,9 +104,21 @@
             $scope.loading = true;
             $http.get("products.json").then(function(response) {
                 $scope.products = response.data;
-                $scope.loading = false
+                $scope.loading = false;
             });
+            $scope.productGet = function (id) {
+                $http.get("Product" + id + ".json").then(function (response) {
+                    $scope.product = response.data;
+                    $scope.product.IntroductionDate = new Date(
+                        response.data.IntroductionDate);
+                });
+            };
+            $scope.addClick = function () {
+                $scope.product = new Object();
+                $scope.product.ProductId = 0;
+            }
         });
+
     </script>
 </body>
 </html>
