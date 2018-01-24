@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>CRUD Example</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<!-- jQuery library -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<!-- Latest compiled JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+</head>
+<body>
+  <div class="container" ng-app="myApp" ng-controller="myCtrl">
+    <div class="row">
+      <div class="col-sm-6">
+        <h2>Paul’s Training Company</h2>
+      </div>
+    </div>
+	<div class="row">
+	  <div class="col-sm-6">
+		<table id="productTable"
+			   class="table table-bordered
+					 table-condensed table-striped">
+		  <thead>
+			<tr>
+			  <th>Product Name</th>
+			  <th>Introduction Date</th>
+			  <th>URL</th>
+			  <th>Edit</th>
+			  <th>Delete</th>
+			</tr>
+			<tr ng-show="loading" id="loading">
+				<td colspan="100%"><img src="loader.gif"></td>
+			</tr>
+		  </thead>
+		  <tbody>
+			<tr ng-repeat="x in products">
+				<td>{{x.ProductName}}</td>
+				<td>{{x.IntroductionDate | date : "MM/dd/yyyy"}}</td>
+				<td>{{x.Url}}</td>
+				<td><button type='button' ng-click='productGet(x.ProductId);' class='btn btn-default'><span class='glyphicon glyphicon-edit' /></button>
+				</td>
+				<td><button type='button' ng-click='productDelete(x.ProductId);' class='btn btn-default'><span class='glyphicon glyphicon-remove' /></button>
+				</td>
+			</tr>
+		  </tbody>
+		</table>
+
+		</div>
+	</div>
+	<div class="row">
+	  <div class="col-sm-6">
+		<button type="button" id="addButton"
+				class="btn btn-primary"
+				ng-click="addClick();">
+		  Add Product
+		</button>
+		
+	  </div>
+	</div>
+	<div class="row">
+	  <div class="col-sm-6">
+		<div class="panel panel-primary">
+		  <div class="panel-heading">
+			Product Information
+		  </div>
+		  <div class="panel-body">
+			<input type="hidden" id="productid" ng-model="product.ProductId"/>
+			<div class="form-group">
+			  <label for="productname">Product Name</label>
+			  <input type="text" id="productname"
+					 class="form-control" ng-model="product.ProductName"/>
+			</div>
+			<div class="form-group">
+			  <label for="introdate">Introduction Date
+			  </label>
+			  <input type="date" id="introdate"
+					 class="form-control" ng-model="product.IntroductionDate"/>
+			</div>
+			<div class="form-group">
+			  <label for="url">URL</label>
+			  <input type="url" id="url"
+					 class="form-control" ng-model="product.Url"/>
+			</div>		  
+		  </div>
+		  <div class="panel-footer">
+			<div class="row">
+			  <div class="col-xs-12">
+				<button type="button" id="updateButton"
+						class="btn btn-primary"
+						ng-click="updateClick();">
+				  {{add}}
+			   </button>
+			  </div>
+			</div>
+		  </div>
+	   </div>
+	  </div>
+	</div>	
+  </div>  
+  
+	<script>
+	var app = angular.module("myApp", []);
+	app.controller("myCtrl", function($scope, $http){
+		$scope.add = "Add";
+		$scope.loading = true;
+		$http.get("Products.json").then(function(response){
+			$scope.products = response.data;
+			$scope.loading = false;
+		});
+		
+		$scope.productGet = function(id){
+			$http.get("Product" + id + ".json").then(function(response){
+				$scope.product = response.data;
+				$scope.product.IntroductionDate = new Date(response.data.IntroductionDate);
+				$scope.add = "Update";
+			});
+		};
+		
+		$scope.addClick = function(){
+			$scope.product = new Object();
+			$scope.product.ProductId = 0;
+			$scope.add = "Add";
+		};
+		
+		$scope.updateClick = function(){
+			if ($scope.product.ProductId == 0){
+				// $http.post("api", product).then(...);
+				$scope.products.push($scope.product);
+				$scope.addClick();
+			}
+			else{
+				// $http.put...
+				var index = $scope.products.findIndex(item => item.ProductId == $scope.product.ProductId);
+				$scope.products[index] = $scope.product;
+				$scope.addClick();
+			}
+		};
+		
+		$scope.productDelete = function (id){
+			// $http.delete("").then(...)
+				var index = $scope.products.findIndex(item => item.ProductId == id);
+				$scope.products.splice(index, 1);
+		};
+		$scope.product = new Object();
+		$scope.product.ProductId = 0;
+	});
+	</script>
+</body>
+</html>
