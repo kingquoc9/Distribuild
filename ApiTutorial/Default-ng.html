@@ -105,7 +105,7 @@
 	app.controller("myCtrl", function($scope, $http){
 		$scope.add = "Add";
 		$scope.loading = true;
-		$http.get("Products.json").then(function(response){
+		$http.get("api/Product").then(function(response){
 			$scope.products = response.data;
 			$scope.loading = false;
 		});
@@ -147,5 +147,13 @@
 		$scope.product.ProductId = 0;
 	});
 	</script>
+    <script>
+  // Handle click event on Update button
+  function updateClick() {
+  }
+  // Handle click event on Add button
+  function addClick() {
+  }
+    </script>
 </body>
 </html>
