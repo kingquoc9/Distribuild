@@ -4,12 +4,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using ApiTutorial;
+using System.Data.Entity;
 
 namespace ApiTutorial.Controllers
 {
     public class ProductController : ApiController
     {
-
+        private Model1 db = new Model1();
+        private bool Update(Product product)
+        {
+            return true;
+        }
 
         private List<Product> CreateMockData()
         {
@@ -45,9 +51,85 @@ namespace ApiTutorial.Controllers
         {
             IHttpActionResult ret = null;
             List<Product> list = new List<Product>();
-            list = CreateMockData();
+            list = db.Products.ToList();
             ret = Ok(list);
             return ret;
+        }
+        [HttpGet()]
+        public IHttpActionResult Get(int id)
+        {
+            IHttpActionResult ret;
+            List<Product> list = new List<Product>();
+            Product prod = new Product();
+
+            prod = db.Products.Where(x => x.ProductId == id).First();
+            if (prod == null)
+            {
+                ret = NotFound();
+            }
+            else
+            {
+                ret = Ok(prod);
+            }
+
+            return ret;
+        }
+        [HttpPost()]
+        public IHttpActionResult Post(Product product)
+        {
+            IHttpActionResult ret = null;
+            product = db.Products.Add(product);
+            db.SaveChanges();
+            if (product != null)
+            {
+                ret = Created<Product>(Request.RequestUri +
+                     product.ProductId.ToString(), product);
+            }
+            else
+            {
+                ret = NotFound();
+            }
+            return ret;
+        }
+        [HttpPut()]
+        public IHttpActionResult Put(int id,
+                             Product product)
+        {
+            IHttpActionResult ret = null;
+            db.Entry(product).State = EntityState.Modified;
+            db.SaveChanges();
+            if (Update(product))
+            {
+                ret = Ok(product);
+            }
+            else
+            {
+                ret = NotFound();
+            }
+            return ret;
+        }
+
+        [HttpPut()]
+        public IHttpActionResult Delete(int id,
+                             Product product)
+        {
+            IHttpActionResult ret = null;
+            var product = db.Products.Remove(db.Products.Where(item => item.ProductId == id).First;
+            if (true)
+            {
+                ret = Ok(true);
+            }
+            else
+            {
+                ret = NotFound();
+            }
+            return ret;
+        }
+
+
+        public virtual new void Dispose()
+        {
+            db.Dispose();
         }
     }
 }

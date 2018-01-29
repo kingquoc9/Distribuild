@@ -11,149 +11,133 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 </head>
 <body>
-  <div class="container" ng-app="myApp" ng-controller="myCtrl">
-    <div class="row">
-      <div class="col-sm-6">
-        <h2>Paul’s Training Company</h2>
-      </div>
-    </div>
-	<div class="row">
-	  <div class="col-sm-6">
-		<table id="productTable"
-			   class="table table-bordered
-					 table-condensed table-striped">
-		  <thead>
-			<tr>
-			  <th>Product Name</th>
-			  <th>Introduction Date</th>
-			  <th>URL</th>
-			  <th>Edit</th>
-			  <th>Delete</th>
-			</tr>
-			<tr ng-show="loading" id="loading">
-				<td colspan="100%"><img src="loader.gif"></td>
-			</tr>
-		  </thead>
-		  <tbody>
-			<tr ng-repeat="x in products">
-				<td>{{x.ProductName}}</td>
-				<td>{{x.IntroductionDate | date : "MM/dd/yyyy"}}</td>
-				<td>{{x.Url}}</td>
-				<td><button type='button' ng-click='productGet(x.ProductId);' class='btn btn-default'><span class='glyphicon glyphicon-edit' /></button>
-				</td>
-				<td><button type='button' ng-click='productDelete(x.ProductId);' class='btn btn-default'><span class='glyphicon glyphicon-remove' /></button>
-				</td>
-			</tr>
-		  </tbody>
-		</table>
+    <div class="container" ng-app="myApp" ng-controller="myCtrl">
+        <div class="row">
+            <div class="col-sm-6">
+                <h2>Paul's Training Company</h2>
+                <table id="productTable"
+                       class="table table-bordered
+                 table-condensed table-striped">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Introduction Date</th>
+                            <th>URL</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        <tr ng-show="loading" id="loading">
+                            <td colspan="100%"><img src="giphy.gif"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="x in products">
+                            <td>{{x.ProductName}}</td>
+                            <td>{{x.IntroductionDate}}</td>
+                            <td>{{x.Url}}</td>
+                            <td>
+                                <button type='button' ng-click='productGet(x.ProductId);'
+                                        class='btn btn-default'>
+                                    <span class='glyphicon glyphicon-edit' />
+                                </button>
+                            <td>
+                                <button type='button' ng-click='productDelete(x.ProductId);'
+                                        class='btn btn-default'>
+                                    <span class='glyphicon glyphicon-remove' />
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" id="addButton"
+                        class="btn btn-primary"
+                        ng-click="addClick();">
+                    Add Product
+                </button>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        Product Information
+                    </div>
+                    <div class="panel-body">
+                        <input type="hidden" id="productid" value="0" ng-model="product.ProductId" />
+                        <div class="form-group">
+                            <label for="productname">Product Name</label>
+                            <input type="text" id="productname"
+                                   class="form-control" ng-model="product.ProductName" />
+                        </div>
+                        <div class="form-group">
+                            <label for="introdate">
+                                Introduction Date
+                            </label>
+                            <input type="date" id="introdate"
+                                   class="form-control" ng-model="product.IntroductionDate" />
+                        </div>
+                        <div class="form-group">
+                            <label for="Url">URL</label>
+                            <input type="Url" id="Url"
+                                   class="form-control" ng-model="product.Url" />
+                        </div>
+                        <div class="panel-footer">
+                            <div class="col-xs-12">
+                                <button type="button" id="updateButton"
+                                        class="btn btn-primary"
+                                        ng-click="updateClick();">
+                                    {{add}}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-		</div>
-	</div>
-	<div class="row">
-	  <div class="col-sm-6">
-		<button type="button" id="addButton"
-				class="btn btn-primary"
-				ng-click="addClick();">
-		  Add Product
-		</button>
-		
-	  </div>
-	</div>
-	<div class="row">
-	  <div class="col-sm-6">
-		<div class="panel panel-primary">
-		  <div class="panel-heading">
-			Product Information
-		  </div>
-		  <div class="panel-body">
-			<input type="hidden" id="productid" ng-model="product.ProductId"/>
-			<div class="form-group">
-			  <label for="productname">Product Name</label>
-			  <input type="text" id="productname"
-					 class="form-control" ng-model="product.ProductName"/>
-			</div>
-			<div class="form-group">
-			  <label for="introdate">Introduction Date
-			  </label>
-			  <input type="date" id="introdate"
-					 class="form-control" ng-model="product.IntroductionDate"/>
-			</div>
-			<div class="form-group">
-			  <label for="url">URL</label>
-			  <input type="url" id="url"
-					 class="form-control" ng-model="product.Url"/>
-			</div>		  
-		  </div>
-		  <div class="panel-footer">
-			<div class="row">
-			  <div class="col-xs-12">
-				<button type="button" id="updateButton"
-						class="btn btn-primary"
-						ng-click="updateClick();">
-				  {{add}}
-			   </button>
-			  </div>
-			</div>
-		  </div>
-	   </div>
-	  </div>
-	</div>	
-  </div>  
-  
-	<script>
-	var app = angular.module("myApp", []);
-	app.controller("myCtrl", function($scope, $http){
-		$scope.add = "Add";
-		$scope.loading = true;
-		$http.get("api/Product").then(function(response){
-			$scope.products = response.data;
-			$scope.loading = false;
-		});
-		
-		$scope.productGet = function(id){
-			$http.get("Product" + id + ".json").then(function(response){
+
+        </div>
+    </div>
+    <script>
+        var app = angular.module("myApp", []);
+        app.controller("myCtrl", function ($scope, $http) {
+				$scope.add="Add";
+				$scope.loading = true;
+            $http.get("api/Product").then(function (response) {
+                $scope.products = response.data;
+				$scope.loading = false;
+            });
+			$scope.productGet = function(id){
+			$http.get("api/Product/" + id).then(function(response){
 				$scope.product = response.data;
 				$scope.product.IntroductionDate = new Date(response.data.IntroductionDate);
-				$scope.add = "Update";
+				$scope.add="Update";
 			});
-		};
-		
-		$scope.addClick = function(){
-			$scope.product = new Object();
-			$scope.product.ProductId = 0;
-			$scope.add = "Add";
-		};
-		
-		$scope.updateClick = function(){
-			if ($scope.product.ProductId == 0){
-				// $http.post("api", product).then(...);
-				$scope.products.push($scope.product);
-				$scope.addClick();
-			}
-			else{
-				// $http.put...
-				var index = $scope.products.findIndex(item => item.ProductId == $scope.product.ProductId);
-				$scope.products[index] = $scope.product;
-				$scope.addClick();
-			}
-		};
-		
-		$scope.productDelete = function (id){
-			// $http.delete("").then(...)
-				var index = $scope.products.findIndex(item => item.ProductId == id);
-				$scope.products.splice(index, 1);
-		};
-		$scope.product = new Object();
-		$scope.product.ProductId = 0;
-	});
-	</script>
-    <script>
-  // Handle click event on Update button
-  function updateClick() {
-  }
-  // Handle click event on Add button
-  function addClick() {
-  }
+			};
+			$scope.productDelete = function (id) {
+                $http.del
+					var index = $scope.products.findIndex(item=>item.ProductId == id);
+					$scope.products.splice(index, 1);
+			};
+			$scope.addClick = function(){
+			    $scope.product = new Object(),
+                $scope.product.ProductID = 0;
+					$scope.add="Add";
+			};
+			$scope.updateClick=function(){
+			    if ($scope.product.ProductID == 0) {
+			        $http.post("api/Product", $scope.product).then(function (response) {
+			            $scope.products.push(response.data);
+			            $scope.addClick();
+			        });
+			    }
+			    else {
+			        $http.put("api/Product/" + $scope.ProductId, $scope.product).then(function (response) {
+			            var index = $scope.products.findIndex(item => item.ProductId == $scope.product.ProductID);
+			            $scope.products[index] = $scope.product;
+			            $scope.addClick();
+			        });
+			    }
+
+			};
+			$scope.product = new Object(),
+			$scope.product.ProductID = 0;
+        });
     </script>
 </body>
 </html>
