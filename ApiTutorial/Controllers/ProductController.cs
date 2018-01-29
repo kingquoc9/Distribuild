@@ -12,41 +12,7 @@ namespace ApiTutorial.Controllers
     public class ProductController : ApiController
     {
         private Model1 db = new Model1();
-        private bool Update(Product product)
-        {
-            return true;
-        }
-
-        private List<Product> CreateMockData()
-        {
-            List<Product> ret = new List<Product>();
-            ret.Add(new Product()
-            {
-                ProductId = 1,
-                ProductName = "Extending Bootstrap with CSS,JavaScript and jQuery",
-                IntroductionDate = Convert.ToDateTime("6/11/2015"),
-                Url = "http://bit.ly/1SNzc0i"
-            });
-
-            ret.Add(new Product()
-            {
-                ProductId = 2,
-                ProductName = "Build your own Bootstrap BusinessApplication Template in MVC",
-                IntroductionDate = Convert.ToDateTime("1/29/2015"),
-                Url = "http://bit.ly/1I8ZqZg"
-            });
-
-            ret.Add(new Product()
-            {
-                ProductId = 3,
-                ProductName = "Building Mobile Web Sites Using Web Forms,Bootstrap,and HTML5",
-                IntroductionDate = Convert.ToDateTime("8/28/2014"),
-                Url = "http://bit.ly/1J2dcrj"
-            });
-
-            return ret;
-        }
-        [HttpGet()]
+        [HttpGet]
         public IHttpActionResult Get()
         {
             IHttpActionResult ret = null;
@@ -55,6 +21,37 @@ namespace ApiTutorial.Controllers
             ret = Ok(list);
             return ret;
         }
+
+        private List<Product> CreateMockData()
+        {
+            List<Product> ret = new List<Product>();
+            ret.Add(new Product()
+            {
+                ProductId = 1,
+                ProductName = "Extending Bootstrap with CSS, JavaScript and jQuery",
+                IntroductionDate = Convert.ToDateTime("6/11/2015"),
+                Url = "http://bit.ly/1SNzc0i"
+            });
+
+            ret.Add(new Product()
+            {
+                ProductId = 2,
+                ProductName = "Build your own Bootstrap Business Application Template in MVC",
+                IntroductionDate = Convert.ToDateTime("1/29/2015"),
+                Url = "http://bit.ly/1I8ZqZg"
+            });
+
+            ret.Add(new Product()
+            {
+                ProductId = 3,
+                ProductName = "Building Mobile Web Sites Using Web Forms, Bootstrap, and HTML5",
+                IntroductionDate = Convert.ToDateTime("8/28/2014"),
+                Url = "http://bit.ly/1J2dcrj"
+            });
+
+            return ret;
+        }
+
         [HttpGet()]
         public IHttpActionResult Get(int id)
         {
@@ -62,7 +59,7 @@ namespace ApiTutorial.Controllers
             List<Product> list = new List<Product>();
             Product prod = new Product();
 
-            prod = db.Products.Where(x => x.ProductId == id).First();
+            prod = db.Products.Where(p => p.ProductId == id).First();
             if (prod == null)
             {
                 ret = NotFound();
@@ -74,6 +71,7 @@ namespace ApiTutorial.Controllers
 
             return ret;
         }
+
         [HttpPost()]
         public IHttpActionResult Post(Product product)
         {
@@ -91,14 +89,14 @@ namespace ApiTutorial.Controllers
             }
             return ret;
         }
+
         [HttpPut()]
-        public IHttpActionResult Put(int id,
-                             Product product)
+        public IHttpActionResult Put(int id, Product product)
         {
             IHttpActionResult ret = null;
             db.Entry(product).State = EntityState.Modified;
             db.SaveChanges();
-            if (Update(product))
+            if (true)
             {
                 ret = Ok(product);
             }
@@ -109,12 +107,12 @@ namespace ApiTutorial.Controllers
             return ret;
         }
 
-        [HttpPut()]
-        public IHttpActionResult Delete(int id,
-                             Product product)
+        [HttpDelete()]
+        public IHttpActionResult Delete(int id)
         {
             IHttpActionResult ret = null;
-            var product = db.Products.Remove(db.Products.Where(item => item.ProductId == id).First;
+            var product = db.Products.Remove(db.Products.Where(item => item.ProductId == id).First());
+            db.SaveChanges();
             if (true)
             {
                 ret = Ok(true);
@@ -126,10 +124,10 @@ namespace ApiTutorial.Controllers
             return ret;
         }
 
-
-        public virtual new void Dispose()
+        protected override void Dispose(bool disposing)
         {
             db.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
